@@ -1,4 +1,3 @@
-import 'dart:html';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:flutter/material.dart';
 
@@ -10,57 +9,75 @@ class MainScreen extends StatefulWidget {
 }
 
 class _MainScreenState extends State<MainScreen> {
-  String? scanResult;
+  String? barcode;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        actions: [
-          IconButton(
-              onPressed: () {
-                searchProduct();
-              },
-              icon: const Icon(Icons.search))
-        ],
-      ),
       drawer: Drawer(
         child: ListView(
           padding: EdgeInsets.zero,
-          children: [
-            const DrawerHeader(
+          children: const <Widget>[
+            DrawerHeader(
               decoration: BoxDecoration(
-                color: Colors.lightGreenAccent,
+                color: Colors.blue,
               ),
-              child: Text('Drawer Header'),
+              child: Text(
+                'Drawer Header',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 24,
+                ),
+              ),
             ),
             ListTile(
-              title: const Text('Item 1'),
-              onTap: () {},
+              leading: Icon(Icons.message),
+              title: Text('Messages'),
             ),
             ListTile(
-              title: const Text('Item 2'),
-              onTap: () {},
+              leading: Icon(Icons.account_circle),
+              title: Text('Profile'),
+            ),
+            ListTile(
+              leading: Icon(Icons.settings),
+              title: Text('Settings'),
             ),
           ],
         ),
+      ),
+      appBar: AppBar(
+        actions: [
+          IconButton(
+            onPressed: () {},
+            icon: Icon(Icons.search_outlined),
+          )
+        ],
       ),
       body: Center(
           child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-            Text(scanResult.toString()),
-            Row(
-              children: [
-                ElevatedButton.icon(
-                    onPressed: scanBarcode,
-                    icon: Icon(Icons.camera_alt),
-                    label: Text("Scan Barcode"))
-              ],
+            Spacer(
+              flex: 2,
             ),
+            Align(
+              alignment: Alignment.center,
+              child: Container(
+                  padding: EdgeInsets.all(8),
+                  child: ElevatedButton.icon(
+                      onPressed: scanBarcode,
+                      icon: Icon(Icons.camera_alt),
+                      label: Text("Scan Barcode"))),
+            ),
+            Spacer(),
             Row(
               children: [
                 Expanded(
                   child: Container(
+                    margin: EdgeInsets.all(8),
+                    padding: EdgeInsets.all(32),
+                    decoration: BoxDecoration(
+                        border: Border.all(color: Colors.greenAccent)),
+                    alignment: Alignment.bottomCenter,
                     child: Text("AdvertisementSpaceHolder"),
                   ),
                 ),
@@ -70,21 +87,22 @@ class _MainScreenState extends State<MainScreen> {
     );
   }
 
-  Future scanBarcode() async {
-    String scanResult;
+  Future<void> scanBarcode() async {
     try {
-      scanResult = await FlutterBarcodeScanner.scanBarcode(
-          "90EE90", "Cansel", true, ScanMode.BARCODE);
-    } on Exception {
-      scanResult = "failed to scan";
-    }
-    if (!mounted) return;
-    setState(() {
-      this.scanResult = scanResult;
-    });
-  }
-}
+      final barcode = await FlutterBarcodeScanner.scanBarcode(
+        '#ff6666',
+        'Cancel',
+        true,
+        ScanMode.BARCODE,
+      );
 
-void searchProduct() {
-  //database sucker
+      if (!mounted) return;
+
+      setState(() {
+        this.barcode = barcode;
+      });
+    } on Exception {
+      barcode = 'Failed to get platform version.';
+    }
+  }
 }
